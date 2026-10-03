@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Món quà nho nhỏ dành cho Tiến ❤️</title>
+  <!-- Nhúng phông chữ Quicksand -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================
+       RESET & STYLE CHUNG
+       ========================================= */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-image: url('https://i.postimg.cc/0NQ1569C/nen.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      overflow-x: hidden;
+      padding: 15px;
+      position: relative;
+    }
+
+    .page-step {
+      display: none;
+      width: 100%;
+      max-width: 420px;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    .page-step.active {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(8px);
+      width: 100%;
+      padding: 25px 20px;
+      border-radius: 25px;
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+      border: 2px dashed #93c5fd;
+      position: relative;
+    }
+
+    /* =========================================
+       ĐỒNG HỒ ĐẾM NGƯỢC
+       ========================================= */
+    .countdown-container {
+      background: rgba(255, 255, 255, 0.92);
+      border: 2px dashed #f472b6;
+      border-radius: 20px;
+      padding: 15px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(244, 114, 182, 0.15);
+      margin-bottom: 10px;
+    }
+
+    .cd-title {
+      font-size: 1.1rem;
+      color: #db2777;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .cd-timer {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .cd-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cd-number {
+      background: #fce7f3;
+      color: #be185d;
+      font-size: 1.3rem;
+      font-weight: 800;
+      padding: 8px 12px;
+      border-radius: 12px;
+      min-width: 48px;
+      border: 1px solid #fbcfe8;
+    }
+
+    .cd-label {
+      font-size: 0.75rem;
+      color: #9d174d;
+      margin-top: 6px;
+      font-weight: 700;
+    }
+
+    .wait-msg {
+      color: #64748b;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-top: 15px;
+    }
+
+    /* =========================================
+       BÀN PHÍM NHẬP MẬT MÃ
+       ========================================= */
+    .keypad-title {
+      font-size: 1.4rem;
+      color: #3b82f6;
+      margin-bottom: 15px;
+      letter-spacing: 1.5px;
+      font-weight: 800;
+    }
+
+    .code-display {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .code-box {
+      width: 45px;
+      height: 45px;
+      border: 2px solid #60a5fa;
+      border-radius: 12px;
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #1e40af;
+    }
+
+    .keypad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    .key-btn {
+      background: #ffffff;
+      border: 2px solid #bfdbfe;
+      border-radius: 15px;
+      padding: 14px 0;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1e3a8a;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .key-btn:active {
+      transform: scale(0.92);
+      background: #dbeafe;
+    }
+
+    /* MODAL POPUP */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-content {
+      background: white;
+      width: min(90%, 320px);
+      padding: 20px;
+      border-radius: 20px;
+      text-align: center;
+      border: 2px dashed #60a5fa;
+    }
+
+    .modal-video {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin: 10px 0;
+    }
+
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #1e3a8a;
+    }
+
+    .action-btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 20px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .action-btn:hover { transform: scale(1.05); }
+
+    /* =========================================
+       TRANG LỰA CHỌN & PHONG BÌ
+       ========================================= */
+    .media-box {
+      width: 100%;
+      height: 220px;
+      border-radius: 18px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      background: #f1f5f9;
+    }
+    .media-box video { width: 100%; height: 100%; object-fit: cover; }
+
+    .choice-msg {
+      font-size: 1.15rem;
+      color: #334155;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .btn-group { display: flex; justify-content: center; gap: 15px; }
+    .btn-yes { background-color: #60a5fa; }
+    .btn-no { background-color: #fb923c; }
+
+    .envelope-wrapper { cursor: pointer; margin: 30px 0; }
+    .envelope {
+      width: 250px; height: 170px;
+      background: #60a5fa;
+      border-radius: 15px;
+      position: relative;
+      display: flex; justify-content: center; align-items: center;
+      transition: transform 0.3s ease;
+    }
+    .envelope:hover { transform: scale(1.03); }
+    .envelope-seal {
+      width: 50px; height: 50px; background: #f43f5e;
+      border-radius: 50%; display: flex; justify-content: center; align-items: center;
+      color: white; font-size: 1.5rem;
+    }
+
+    /* =========================================
+       SLIDE THIỆP
+       ========================================= */
+    .wish-slider-wrapper {
+      position: relative; width: 100%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .wish-card-outer {
+      background: #fffefb; border: 3px solid #f472b6;
+      border-radius: 22px; padding: 12px; width: 100%; max-width: 340px;
+    }
+
+    .wish-card-inner {
+      border: 2px dashed #fbcfe8; border-radius: 16px;
+      padding: 30px 20px; text-align: center; min-height: 350px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      background: #ffffff;
+      position: relative;
+      overflow: visible;
+    }
+
+    .wish-slide {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 290px;
+    }
+
+    .card-header-icon { font-size: 1.3rem; color: #f472b6; margin-bottom: 4px; }
+    .card-title { font-size: 1.25rem; font-weight: 800; color: #374151; margin-bottom: 12px; }
+    .card-text { color: #4b5563; font-size: 0.98rem; line-height: 1.65; font-weight: 600; white-space: pre-line; margin-bottom: 12px; }
+    .card-footer { font-size: 0.85rem; color: #db2777; font-weight: 800; }
+
+    .nav-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 38px; height: 38px; background: #ffffff;
+      border: 2px solid #f472b6; border-radius: 12px; color: #f472b6;
+      font-size: 1.2rem; font-weight: bold; cursor: pointer; z-index: 10;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: all 0.2s;
+    }
+    .nav-arrow:hover { background: #fce7f3; transform: translateY(-50%) scale(1.1); }
+    .nav-arrow.prev { left: -16px; }
+    .nav-arrow.next { right: -16px; }
+
+    /* ĐỊNH DẠNG 5 HÌNH NHỎ RẢI RÁC VỚI HIỆU ỨNG POLAROID */
+    .mini-pic {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #ffffff;
+      outline: 2px solid #fbcfe8;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      z-index: 1;
+      opacity: 0.88;
+      transition: all 0.25s ease-in-out;
+    }
+
+    .mini-pic:hover {
+      transform: scale(1.25) rotate(0deg) !important;
+      z-index: 5;
+      opacity: 1;
+      outline-color: #f472b6;
+    }
+
+    /* 5 Vị trí cân đối xung quanh viền slide */
+    .pic-pos-1 { top: -10px; left: -12px; transform: rotate(-12deg); } /* Góc trên trái */
+    .pic-pos-2 { top: -10px; right: -12px; transform: rotate(14deg); } /* Góc trên phải */
+    .pic-pos-3 { bottom: -10px; left: -12px; transform: rotate(-8deg); } /* Góc dưới trái */
+    .pic-pos-4 { bottom: -10px; right: -12px; transform: rotate(12deg); } /* Góc dưới phải */
+    .pic-pos-5 { top: 45%; left: -18px; transform: rotate(6deg); }      /* Mép giữa bên trái */
+
+    /* BUNG NỞ TRÁI TIM */
+    #heart-burst-container { position: fixed; inset: 0; pointer-events: none; z-index: 999; overflow: hidden; }
+    .burst-heart { position: absolute; animation: floatUpAndFade 1.2s ease-out forwards; opacity: 1; }
+    @keyframes floatUpAndFade {
+      0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-120px) scale(1.4) rotate(25deg); opacity: 0; }
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<!-- TRÌNH PHÁT NHẠC NỀN -->
+<audio id="bg-music" loop>
+  <source src="./images/nhac.mp3" type="audio/mpeg">
+</audio>
+
+<div id="heart-burst-container"></div>
+
+<!-- =========================================
+     BƯỚC 1: ĐẾM NGƯỢC
+     ========================================= -->
+<div id="step-1" class="page-step active">
+  <div class="card">
+    <div class="countdown-container">
+      <div class="cd-title">⏳ Đếm ngược đến sinh nhật 03/11 🎂</div>
+      <div class="cd-timer">
+        <div class="cd-item"><div class="cd-number" id="cd-days">00</div><div class="cd-label">NGÀY</div></div>
+        <div class="cd-item"><div class="cd-number" id="cd-hours">00</div><div class="cd-label">GIỜ</div></div>
+        <div class="cd-item"><div class="cd-number" id="cd-minutes">00</div><div class="cd-label">PHÚT</div></div>
+        <div class="cd-item"><div class="cd-number" id="cd-seconds">00</div><div class="cd-label">GIÂY</div></div>
+      </div>
+    </div>
+
+    <div id="wait-msg" class="wait-msg">Chưa tới ngày sinh nhật, đợi đi nhaaaa :></div>
+    <button id="btn-unlock" class="action-btn hidden" style="margin-top: 15px; width: 100%; background: #f472b6; color: white;" onclick="goToStep('step-2')">
+      Đến sinh nhật rồi, gô mở quà nèeee 🎉
+    </button>
+  </div>
+</div>
+
+<!-- =========================================
+     BƯỚC 2: NHẬP MẬT MÃ
+     ========================================= -->
+<div id="step-2" class="page-step">
+  <div class="card">
+    <div class="keypad-title">NHẬP SINH NHẬT VÔ ĐÂYYY</div>
+    <div class="code-display">
+      <div class="code-box" id="digit-0"></div><div class="code-box" id="digit-1"></div>
+      <div class="code-box" id="digit-2"></div><div class="code-box" id="digit-3"></div>
+    </div>
+    <div class="keypad-grid">
+      <button class="key-btn" onclick="pressKey('1')">1</button><button class="key-btn" onclick="pressKey('2')">2</button><button class="key-btn" onclick="pressKey('3')">3</button>
+      <button class="key-btn" onclick="pressKey('4')">4</button><button class="key-btn" onclick="pressKey('5')">5</button><button class="key-btn" onclick="pressKey('6')">6</button>
+      <button class="key-btn" onclick="pressKey('7')">7</button><button class="key-btn" onclick="pressKey('8')">8</button><button class="key-btn" onclick="pressKey('9')">9</button>
+      <button class="key-btn" onclick="clearCode()">C</button><button class="key-btn" onclick="pressKey('0')">0</button><button class="key-btn" onclick="deleteCode()">⌫</button>
+    </div>
+  </div>
+</div>
+
+<!-- POPUPS -->
+<div id="modal-wrong" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-title">Sai rồi bocu nhập lại điiiii 💔</div>
+    <video class="modal-video" autoplay loop muted playsinline><source src="./images/buon.mp4" type="video/mp4"></video>
+    <button class="action-btn" onclick="closeModal('modal-wrong')">Try Again?</button>
+  </div>
+</div>
+
+<div id="modal-correct" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-title">HAY TA 🎉</div>
+    <video class="modal-video" autoplay loop muted playsinline><source src="./images/meme2.mp4" type="video/mp4"></video>
+    <button class="action-btn" onclick="goToStep('step-3')">Proceed</button>
+  </div>
+</div>
+
+<!-- =========================================
+     BƯỚC 3: TRANG LỰA CHỌN
+     ========================================= -->
+<div id="step-3" class="page-step">
+  <div class="card">
+    <div class="media-box"><video id="choiceVideo" autoplay loop muted playsinline><source src="./images/meme1.mp4" type="video/mp4"></video></div>
+    <div class="choice-msg" id="choiceMsg">Muốn mở quà hong cu <br> " ヽ(♡‿♡)ノ "</div>
+    <div id="btn-group-main" class="btn-group">
+      <button class="action-btn btn-yes" onclick="handleChoiceYes()">Mở sao hong</button>
+      <button class="action-btn btn-no" onclick="handleChoiceNo()">Hoi hong muốn</button>
+    </div>
+    <div id="btn-group-retry" class="btn-group hidden"><button class="action-btn btn-yes" onclick="resetChoice()">Buồn luônnnnn, cho chọn lại đó </button></div>
+    <div id="btn-group-next" class="btn-group hidden"><button class="action-btn btn-yes" onclick="goToStep('step-4')">Gô gô gô ✨</button></div>
+  </div>
+</div>
+
+<!-- =========================================
+     BƯỚC 4: PHONG BÌ THƯ
+     ========================================= -->
+<div id="step-4" class="page-step">
+  <div class="card">
+    <div class="keypad-title">BỒ CÂU CỦA VY ĐƯA CHO TIẾN BỨC THƯ GÌ NÈEEEE 💌</div>
+    <div class="envelope-wrapper" onclick="goToStep('step-5'); triggerHeartBurst();">
+      <div class="envelope"><div class="envelope-seal">💖</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================
+     BƯỚC 5: 4 SLIDE LỜI CHÚC (MỖI SLIDE 5 ẢNH)
+     ========================================= -->
+<div id="step-5" class="page-step">
+  <div class="wish-slider-wrapper">
+    <button class="nav-arrow prev" onclick="prevWishSlide()">❮</button>
+
+    <div class="wish-card-outer">
+      <div class="wish-card-inner">
+
+        <!-- SLIDE 1 (Ảnh anh1 -> anh5) -->
+        <div class="wish-slide" id="slide-1">
+          <img src="https://i.postimg.cc/XYx00K6v/anh1.jpg" class="mini-pic pic-pos-1">
+          <img src="https://i.postimg.cc/kgwddNP2/anh2.jpg" class="mini-pic pic-pos-2">
+          <img src="https://i.postimg.cc/rwgLLG20/anh3.jpg" class="mini-pic pic-pos-3">
+          <img src="https://i.postimg.cc/g24PPybr/anh4.jpg" class="mini-pic pic-pos-4">
+
+          <div class="card-header-icon">♡</div>
+          <div class="card-title">Hôm nay là một ngày đặc biệt của Tiến</div>
+          <div class="card-text">
+            Chúc Tiến sinh nhật vui vẻ bên gia đình và bạn bè 💖
+
+            Chúc Tiến tuổi mới ý nghĩa, hạnh phúc, học giỏi và đạt được những điều mình muốn
+            Giữ sức khỏe thật tốt và chúc Tiến hạnh phúc bên người mình thương nha =)))
+          </div>
+          <div class="card-footer">this website is exclusively for you 💕</div>
+        </div>
+
+        <!-- SLIDE 2 (Ảnh anh6 -> anh10) -->
+        <div class="wish-slide hidden" id="slide-2">
+          <img src="https://i.postimg.cc/vZXdd7w6/anh6.jpg" class="mini-pic pic-pos-1">
+          <img src="https://i.postimg.cc/7ZXyy1rz/anh7.jpg" class="mini-pic pic-pos-2">
+          <img src="https://i.postimg.cc/jSvrr6YP/anh8.jpg" class="mini-pic pic-pos-3">
+          <img src="https://i.postimg.cc/52pMM5Ww/anh9.jpg" class="mini-pic pic-pos-4">
+
+          <div class="card-header-icon">♡</div>
+          <div class="card-title">Lời nhắn của Vy nè</div>
+          <div class="card-text">
+            Chúc mừng sinh nhật nha :>
+            Những gì chờ đợi m ở phía trước, nhất định sẽ tốt đẹp hơn những gì đã bỏ m lại ở phía sau
+            Mong rằng tuổi mới sẽ mang đến cho m thật nhiều niềm vui, những cơ hội mới và những điều xứng đáng với m
+            Luôn tin rằng những ngày tốt đẹp vẫn đang đợi m nha 💗 ✨
+          </div>
+          <div class="card-footer">happy birthday Tiến 🎉</div>
+        </div>
+
+        <!-- SLIDE 3 (Ảnh anh11 -> anh15) -->
+        <div class="wish-slide hidden" id="slide-3">
+          <img src="https://i.postimg.cc/XYx00K68/anh11.jpg" class="mini-pic pic-pos-1">
+          <img src="https://i.postimg.cc/4xwTTvRP/anh12.jpg" class="mini-pic pic-pos-2">
+          <img src="https://i.postimg.cc/RZGzz1xX/anh13.jpg" class="mini-pic pic-pos-3">
+          <img src="https://i.postimg.cc/sgKRRPCT/anh14.jpg" class="mini-pic pic-pos-4">
+
+          <div class="card-header-icon">♡</div>
+          <div class="card-title">Mong m hạnh phúc và bình an</div>
+          <div class="card-text">
+            Người ta đều chúc anh một đời phồn hoa tựa gấm
+            Vy lại chỉ mong tương lai Tiến, trên bàn có hoa, trong chén có trà, ngày mưa có ô, đêm tối có đèn
+            Nguyện cho thanh đạm không tranh, gắn kết bên người lương thiện mà bầu bạn
+            Hạnh phúc, an yên nửa đời về sau...🌟
+          </div>
+          <div class="card-footer">from zyyyy 💕</div>
+        </div>
+
+        <!-- SLIDE 4 -->
+        <div class="wish-slide hidden" id="slide-4">
+          <img src="https://i.postimg.cc/FHGQQbXW/anh16.jpg" class="mini-pic pic-pos-1">
+          <img src="https://i.postimg.cc/RZGzz1xp/anh17.jpg" class="mini-pic pic-pos-2">
+          <img src="https://i.postimg.cc/LsXF4qmB/anh18.jpg" class="mini-pic pic-pos-3">
+          <img src="https://i.postimg.cc/zfBYDLqF/anh19.jpg" class="mini-pic pic-pos-4">
+
+          <div class="card-header-icon">♡</div>
+          <div class="card-title">Lời nhắn cuối cùng</div>
+          <div class="card-text">
+            Mặc dù Vy không thể đón sinh nhật cùng Tiến  nhưng Vy mong món quà này sẽ mang đến niềm vui nho nhỏ dành cho Tến nha🌟
+          </div>
+          <div class="card-footer">hết rồiiiii 🌸</div>
+        </div>
+
+      </div>
+    </div>
+
+    <button class="nav-arrow next" onclick="nextWishSlide()">❯</button>
+  </div>
+
+  <p style="margin-top: 18px; font-size: 0.8rem; color: #db2777; font-weight: 800;">
+    bấm mũi tên để coi lời chúc của Vy nha 💖
+  </p>
+</div>
+
+<!-- =========================================
+     JAVASCRIPT
+     ========================================= -->
+<script>
+  const SECRET_CODE = "0311";
+  let currentInput = "";
+  let countdownInterval;
+  let isMusicPlaying = false;
+
+  // TỰ ĐỘNG BẬT NHẠC NỀN TRONG LẦN CHẠM/CLICK ĐẦU TIÊN
+  function playBackgroundMusic() {
+    if (!isMusicPlaying) {
+      const bgMusic = document.getElementById('bg-music');
+      bgMusic.volume = 0.6; // Âm lượng 60%
+      bgMusic.play().then(() => {
+        isMusicPlaying = true;
+      }).catch(() => {
+        console.log("Cần tương tác từ người dùng để phát âm thanh.");
+      });
+    }
+  }
+
+  document.body.addEventListener('click', playBackgroundMusic, { once: true });
+
+  // ----- ĐẾM NGƯỢC THỜI GIAN -----
+  function startCountdown() {
+    if (countdownInterval) clearInterval(countdownInterval);
+
+    function updateTimer() {
+      const now = new Date();
+      let year = now.getFullYear();
+
+      // Ngày 03/11 (Trong JS Tháng 11 có index là 10)
+      let targetDate = new Date(year, 9, 3, 0, 0, 0);
+
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        document.getElementById('cd-days').innerText = '00';
+        document.getElementById('cd-hours').innerText = '00';
+        document.getElementById('cd-minutes').innerText = '00';
+        document.getElementById('cd-seconds').innerText = '00';
+
+        document.getElementById('wait-msg').classList.add('hidden');
+        document.getElementById('btn-unlock').classList.remove('hidden');
+
+        if(countdownInterval) clearInterval(countdownInterval);
+        return;
+      }
+
+      document.getElementById('cd-days').innerText = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
+      document.getElementById('cd-hours').innerText = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+      document.getElementById('cd-minutes').innerText = String(Math.floor((diff / 1000 / 60) % 60)).padStart(2, '0');
+      document.getElementById('cd-seconds').innerText = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+    }
+
+    updateTimer();
+    countdownInterval = setInterval(updateTimer, 1000);
+  }
+
+  startCountdown();
+
+  // ----- BÀN PHÍM MẬT MÃ -----
+  function pressKey(num) {
+    playBackgroundMusic();
+    if (currentInput.length < 4) {
+      currentInput += num;
+      updateCodeDisplay();
+      if (currentInput.length === 4) setTimeout(checkCode, 300);
+    }
+  }
+
+  function deleteCode() {
+    currentInput = currentInput.slice(0, -1);
+    updateCodeDisplay();
+  }
+
+  function clearCode() {
+    currentInput = "";
+    updateCodeDisplay();
+  }
+
+  function updateCodeDisplay() {
+    for (let i = 0; i < 4; i++) {
+      document.getElementById(`digit-${i}`).innerText = currentInput[i] ? "⭐" : "";
+    }
+  }
+
+  function checkCode() {
+    if (currentInput === SECRET_CODE) {
+      document.getElementById('modal-correct').classList.add('active');
+    } else {
+      document.getElementById('modal-wrong').classList.add('active');
+    }
+  }
+
+  function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+    clearCode();
+  }
+
+  // ----- CHUYỂN TRANG -----
+  function goToStep(stepId) {
+    playBackgroundMusic();
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+    document.querySelectorAll('.page-step').forEach(p => p.classList.remove('active'));
+    document.getElementById(stepId).classList.add('active');
+  }
+
+  // ----- LỰA CHỌN YES/NO -----
+  const choiceVideo = document.getElementById('choiceVideo');
+  const choiceMsg = document.getElementById('choiceMsg');
+
+  function changeVideo(src) {
+    choiceVideo.innerHTML = `<source src="./images/${src}" type="video/mp4">`;
+    choiceVideo.load();
+    choiceVideo.play();
+  }
+
+  function handleChoiceNo() {
+    changeVideo('buon.mp4');
+    choiceMsg.innerHTML = "Gì kì vậy sao hong chịu mở quà T_T";
+    document.getElementById('btn-group-main').classList.add('hidden');
+    document.getElementById('btn-group-retry').classList.remove('hidden');
+  }
+
+  function handleChoiceYes() {
+    changeVideo('vui.mp4');
+    choiceMsg.innerHTML = " Mở quà đi nè cuuuu (≧◡≦) ♡";
+    document.getElementById('btn-group-main').classList.add('hidden');
+    document.getElementById('btn-group-next').classList.remove('hidden');
+  }
+
+  function resetChoice() {
+    changeVideo('meme1.mp4');
+    choiceMsg.innerHTML = 'Muốn mở quà hong cu <br> " ヽ(♡‿♡)ノ "';
+    document.getElementById('btn-group-retry').classList.add('hidden');
+    document.getElementById('btn-group-main').classList.remove('hidden');
+  }
+
+  // ----- XỬ LÝ 4 SLIDE TRƯỢT THIỆP -----
+  let currentSlide = 1;
+  const totalSlides = 4; // Cập nhật tổng số slide = 4
+
+  function updateSlide() {
+    for (let i = 1; i <= totalSlides; i++) {
+      const slide = document.getElementById(`slide-${i}`);
+      if (i === currentSlide) slide.classList.remove('hidden');
+      else slide.classList.add('hidden');
+    }
+    triggerHeartBurst();
+  }
+
+  function nextWishSlide() {
+    if (currentSlide < totalSlides) currentSlide++;
+    else currentSlide = 1;
+    updateSlide();
+  }
+
+  function prevWishSlide() {
+    if (currentSlide > 1) currentSlide--;
+    else currentSlide = totalSlides;
+    updateSlide();
+  }
+
+  // ----- HIỆU ỨNG TRÁI TIM BUNG NỞ -----
+  function triggerHeartBurst() {
+    const container = document.getElementById('heart-burst-container');
+    const hearts = ['💖', '💕', '💗', '🌸', '✨', '❤️'];
+
+    for (let i = 0; i < 12; i++) {
+      const heart = document.createElement('div');
+      heart.classList.add('burst-heart');
+      heart.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+      heart.style.left = (Math.random() * 80 + 10) + '%';
+      heart.style.top = (Math.random() * 50 + 30) + '%';
+      heart.style.fontSize = (Math.random() * 15 + 18) + 'px';
+      heart.style.animationDuration = (Math.random() * 0.4 + 0.8) + 's';
+
+      container.appendChild(heart);
+      setTimeout(() => heart.remove(), 1200);
+    }
+  }
+</script>
+</body>
+</html>
